@@ -18,14 +18,13 @@ var createGist = function(file_name, content, description, token){
 	  headers: {
 	    Authorization: "token " + token
 	  },
-	  data: JSON.stringify(dataObject), 
-	  success: function(data){
+	  data: JSON.stringify(dataObject)
+
+	}).done(function(data){
 	  	console.log(data)
 	  	var usernameInput = data.owner.login
 	  	myGists(usernameInput, token)
-	  }
-
-	})
+	  })
 };
 
 var myGists = function (username, token){
