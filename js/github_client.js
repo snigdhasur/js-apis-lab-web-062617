@@ -1,5 +1,4 @@
 var createGist = function(file_name, content, description, token){
-
 	var dataObject = Object.assign({}, {
         'public':   true,
         'description': "",
@@ -19,10 +18,14 @@ var createGist = function(file_name, content, description, token){
 	  headers: {
 	    Authorization: "token " + token
 	  },
-	  data: JSON.stringify(dataObject)
+	  data: JSON.stringify(dataObject), 
+	  success: function(data){
+	  	console.log(data)
+	  	var usernameInput = data.owner.login
+	  	myGists(usernameInput, token)
+	  }
+
 	})
-
-
 };
 
 var myGists = function (username, token){
@@ -32,24 +35,37 @@ var myGists = function (username, token){
 	  dataType: 'json',
 	  headers: {
 	    Authorization: "token " + token
+	  }, 
+	  success: function(data) {
+	  	console.log(data)
+	  	let parentEl = document.getElementById("public-gists")
+	  	gistsHTML = data.map(data => `<li><a href=${data.html_url}>${data.description}</a></li>`).join("")
+	  	parentEl.innerHTML =  
+	  	` <ul>
+	  		${gistsHTML}
+	  	  </ul>
+	  	`
 	  }
+
 	})
 
 };
 
 var bindCreateButton = function() {
   // call functions here
+  document.getElementById("submit").addEventListener("click", function(e){
+		e.preventDefault()
+		var fileName = document.getElementById("file_name").value
+		var content = document.getElementById("content").value
+		var token = document.getElementById("token").value
+		var description = document.getElementById("description").value
+		createGist(fileName, content, description, token)
+		console.log("I was clicked!")
+	})
+
 
 };
 
 $(document).ready(function(){
-	document.getElementById("submit").addEventListener("click", function(e){
-		e.preventDefault()
-		var fileName = document.getElementById("file_name")
-		var content = document.getElementById("content")
-		var token = document.getElementById("token")
-		var description = document.getElementById("description")
-		console.log("I was clicked!")
-		createGist(fileName, content, description, token)
-	})
+	bindCreateButton()
 });
